@@ -1,8 +1,7 @@
-package database
+package main
 
 import (
 	"fmt"
-	"go-jwt/models"
 	"log"
 	"mygram_finalprojectgo/models"
 
@@ -14,14 +13,14 @@ var (
 	host = "localhost"
 	user = "postgres"
 	password = "akiyama23"
-	dbPort = "5432"
+	port = "5432"
 	dbname = "postgres"
 	db	*gorm.DB
 	err	error
 )
 
-func StartDB(){
-	config := fmt.Sprintf("host=%s user=%s password=%s dbport=%s dbname=%s sslmode=disable", host, user, password, dbPort, dbname)
+func main(){
+	config := fmt.Sprintf("host=%s user=%s password=%s port=%s dbname=%s sslmode=disable", host, user, password, port, dbname)
 	dsn := config
 	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
@@ -31,8 +30,8 @@ func StartDB(){
 
 	fmt.Println("Sukses koneksi ke database :", err)
 	db.Debug().AutoMigrate(models.User{}, models.Photo{})
+}	
 	
-	func GetDB() *gorm.DB{
-		return db
-	}
+func GetDB() *gorm.DB{
+	return db
 }
