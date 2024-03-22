@@ -1,4 +1,4 @@
-package main
+package database
 
 import (
 	"fmt"
@@ -14,12 +14,12 @@ var (
 	user = "postgres"
 	password = "akiyama23"
 	port = "5432"
-	dbname = "postgres"
+	dbname = "mygram"
 	db	*gorm.DB
 	err	error
 )
 
-func main(){
+func StartDB(){
 	config := fmt.Sprintf("host=%s user=%s password=%s port=%s dbname=%s sslmode=disable", host, user, password, port, dbname)
 	dsn := config
 	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
