@@ -21,6 +21,8 @@ func StartApp() *gin.Engine {
 	{
 		photoRouter.Use(midleware.Authentication())
 		photoRouter.POST("/", controllers.CreatePhoto)
+
+		photoRouter.PUT("/:photoId", midleware.PhotoAuthorization(), controllers.UpdatePhoto)
 	}
 
 	return r
