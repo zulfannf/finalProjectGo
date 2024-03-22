@@ -8,7 +8,7 @@ import (
 type Photo struct {
 	GormModel
 	Title	string `gorm:"not null" json:"title" form:"title" valid:"required~Title of your product is required"`
-	Caption	string 
+	Caption	string `json:"caption" form:"caption"`
 	PhotoUrl string `gorm:"not null" json:"photo_url" form:"photo_url" valid:"required~photo_url of your product is required"`
 	UserId uint
 	User *User
