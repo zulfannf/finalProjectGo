@@ -1,41 +1,38 @@
-package main
+package database
 
 import (
 	"fmt"
-	"database/sql"
+	"go-jwt/models"
+	"log"
+	"mygram_finalprojectgo/models"
 
-	_"github.com/lib/pq"
-)
-
-const (
-	host = "localhost"
-	port = 5432
-	user = "postgres"
-	password = "akiyama23"
-	dbname = "postgres"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 var (
-	db *sql.DB
-	err error
+	host = "localhost"
+	user = "postgres"
+	password = "akiyama23"
+	dbPort = "5432"
+	dbname = "postgres"
+	db	*gorm.DB
+	err	error
 )
 
-func main(){
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+func StartDB(){
+	config := fmt.Sprintf("host=%s user=%s password=%s dbport=%s dbname=%s sslmode=disable", host, user, password, dbPort, dbname)
+	dsn := config
+	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
-	db, err = sql.Open("postgres",psqlInfo)
 	if err != nil {
-		panic(err)
+		log.Fatal("error connecting to database :", err)
 	}
-	
-//Cek koneksi ke data base
-	err = db.Ping()
-	if err != nil{
-		panic(err)
-	}
-	fmt.Println("Success, connected to database!")
-}
 
-func Get()*sql.DB{
-	return db
+	fmt.Println("Sukses koneksi ke database :", err)
+	db.Debug().AutoMigrate(models.User{}, models.Photo{})
+	
+	func GetDB() *gorm.DB{
+		return db
+	}
 }
