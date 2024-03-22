@@ -73,3 +73,62 @@ func UpdatePhoto(c *gin.Context) {
 
 	c.JSON(http.StatusOK, Photo)
 }
+
+//Delete Photo
+
+func DeletePhoto(c *gin.Context) {
+	db := database.GetDB()
+	userData := c.MustGet("userData").(jwt.MapClaims)
+	photoID, err := strconv.Atoi(c.Param("photoId"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid photo ID",
+		})
+		return
+	}
+	userID := uint(userData["id"].(float64))
+
+	Photo := models.Photo{}
+	if err := db.First(&Photo, photoID).Error; err != nil{
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "Photo not Found",
+		})
+		return
+	}
+
+	if Photo.UserId != userID {
+		c.JSON(http.StatusForbidden, gin.H{
+			"error": "You do not have permission to delete",
+		})
+		return
+	}
+
+	if err := db.Delete(&Photo).Error; err != nil{
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to delete photo",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Photo has been deleted",
+	})
+}
+
+//Get data photo
+
+func GetPhoto(c *gin.Context) {
+	db := database.GetDB()
+	userData := c.MustGet("userData").(jwt.MapClaims)
+	userID := uint(userData["id"].(float64))
+
+	Photo := models.Photo{}
+	if err := db.Where("id = ?", userID).Find(&Photo).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Photo not found",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, Photo)
+}

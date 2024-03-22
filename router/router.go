@@ -15,6 +15,7 @@ func StartApp() *gin.Engine {
 		userRouter.POST("/register", controllers.UserRegister)
 
 		userRouter.POST("/login", controllers.UserLogin)
+		userRouter.PUT("/", controllers.UpdateUser) //masih eror
 	}
 
 	photoRouter := r.Group("/photos")
@@ -23,6 +24,8 @@ func StartApp() *gin.Engine {
 		photoRouter.POST("/", controllers.CreatePhoto)
 
 		photoRouter.PUT("/:photoId", midleware.PhotoAuthorization(), controllers.UpdatePhoto)
+		photoRouter.DELETE("/:photoId", midleware.PhotoAuthorization(), controllers.DeletePhoto)
+		photoRouter.GET("/", midleware.PhotoAuthorization(), controllers.GetPhoto) //masih belum muncul
 	}
 
 	return r
