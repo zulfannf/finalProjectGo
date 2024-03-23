@@ -34,6 +34,15 @@ func StartApp() *gin.Engine {
 		photoRouter.GET("/user/:userID", midleware.PhotoAuthorization(), controllers.GetPhoto) //masih belum muncul
 	}
 
+	socialMediaRouter := r.Group("/socialmedias")
+	{
+		socialMediaRouter.Use(midleware.Authentication())
+		socialMediaRouter.POST("/", controllers.PostSocialMedia)
+		socialMediaRouter.PUT("/:socialMediaId", controllers.PutSocialMedia)
+		socialMediaRouter.DELETE("/:socialMediaId", controllers.DeleteSocialMedia)
+		socialMediaRouter.GET("/", midleware.Authentication(),controllers.GetSocialMedia)
+	}
+
 	// commentRouter := r.Group("/comments") //belum masih stuck
 	// {
 	// 	commentRouter.Use(midleware.Authentication())
