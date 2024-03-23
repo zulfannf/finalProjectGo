@@ -62,7 +62,7 @@ import (
 	})
 }
 
-// Update Comment salah
+// Update Comment 
 func PutComment(c *gin.Context) {
 	db := database.GetDB()
 	userData := c.MustGet("userData").(jwt.MapClaims)
@@ -124,4 +124,83 @@ func PutComment(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, comment)
+}
+
+//Delete Comment
+func DeleteComment(c *gin.Context) {
+	db := database.GetDB()
+	userData := c.MustGet("userData").(jwt.MapClaims)
+	userID := uint(userData["id"].(float64))
+
+	photoID, err := strconv.Atoi(c.Param("photoId"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Bad Request",
+			"message": "Invalid photo ID",
+		})
+		return
+	}
+
+	commentID, err := strconv.Atoi(c.Param("commentId"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Bad Request",
+			"message": "Invalid comment ID",
+		})
+		return
+	}
+
+	var comment models.Comment
+	if err := db.Where("id = ? AND photo_id = ?", commentID, photoID).First(&comment).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error":   "Not Found",
+			"message": "Comment not found for the given photo",
+		})
+		return
+	}
+
+	if comment.UserID != userID { // Ensure comment belongs to the user
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error":   "Unauthorized",
+			"message": "You are not authorized to delete this comment",
+		})
+		return
+	}
+
+	if err := db.Delete(&comment).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "Internal Server Error",
+			"message": "Failed to delete comment",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Comment deleted successfully",
+	})
+}
+
+//GetComment
+
+func GetComment(c *gin.Context) {
+	db := database.GetDB()
+	photoID, err := strconv.Atoi(c.Param("photoId"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Bad Request",
+			"message": "Invalid photo ID",
+		})
+		return
+	}
+
+	var comments []models.Comment
+	if err := db.Where("photo_id = ?", photoID).Find(&comments).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "Internal Server Error",
+			"message": "Failed to retrieve comments for the photo",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, comments)
 }

@@ -118,17 +118,17 @@ func DeletePhoto(c *gin.Context) {
 //Get data photo
 
 func GetPhoto(c *gin.Context) {
-	db := database.GetDB()
-	userData := c.MustGet("userData").(jwt.MapClaims)
-	userID := uint(userData["id"].(float64))
+    db := database.GetDB()
+    userID := c.Param("userID")
 
-	Photos := models.Photo{}
-	if err := db.Where("userid = ?", userID).Find(&Photos).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Photo not found",
-		})
-		return
-	}
+    var photos []models.Photo
+    if err := db.Where("user_id = ?", userID).Find(&photos).Error; err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{
+            "error":   "Internal Server Error",
+            "message": "Failed to retrieve photos",
+        })
+        return
+    }
 
-	c.JSON(http.StatusOK, Photos)
+    c.JSON(http.StatusOK, photos)
 }

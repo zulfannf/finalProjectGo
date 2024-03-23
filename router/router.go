@@ -26,10 +26,12 @@ func StartApp() *gin.Engine {
 
 		photoRouter.POST("/:photoId/comments", controllers.CreateComment)
 		photoRouter.PUT("/:photoId/comments/:commentId", midleware.CommentAuthorization(), controllers.PutComment)
+		photoRouter.DELETE("/:photoId/comments/:commentId", midleware.CommentAuthorization(), controllers.DeleteComment)
+		photoRouter.GET("/:photoId/comments", midleware.PhotoAuthorization(),controllers.GetComment)
 
 		photoRouter.PUT("/:photoId", midleware.PhotoAuthorization(), controllers.UpdatePhoto)
 		photoRouter.DELETE("/:photoId", midleware.PhotoAuthorization(), controllers.DeletePhoto)
-		photoRouter.GET("/", midleware.PhotoAuthorization(), controllers.GetPhoto) //masih belum muncul
+		photoRouter.GET("/user/:userID", midleware.PhotoAuthorization(), controllers.GetPhoto) //masih belum muncul
 	}
 
 	// commentRouter := r.Group("/comments") //belum masih stuck
