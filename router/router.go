@@ -24,16 +24,19 @@ func StartApp() *gin.Engine {
 		photoRouter.Use(midleware.Authentication())
 		photoRouter.POST("/", controllers.CreatePhoto)
 
+		photoRouter.POST("/:photoId/comments", controllers.CreateComment)
+		photoRouter.PUT("/:photoId/comments/:commentId", midleware.CommentAuthorization(), controllers.PutComment)
+
 		photoRouter.PUT("/:photoId", midleware.PhotoAuthorization(), controllers.UpdatePhoto)
 		photoRouter.DELETE("/:photoId", midleware.PhotoAuthorization(), controllers.DeletePhoto)
 		photoRouter.GET("/", midleware.PhotoAuthorization(), controllers.GetPhoto) //masih belum muncul
 	}
 
-	commentRouter := r.Group("/comments") //belum masih stuck
-	{
-		commentRouter.Use(midleware.Authentication())
-		commentRouter.POST("/", controllers.CreateComment)
-	}
+	// commentRouter := r.Group("/comments") //belum masih stuck
+	// {
+	// 	commentRouter.Use(midleware.Authentication())
+	// 	commentRouter.POST("/", controllers.CreateComment)
+	// }
 
 	return r
 }
