@@ -15,7 +15,7 @@ func StartApp() *gin.Engine {
 		userRouter.POST("/register", controllers.UserRegister)
 
 		userRouter.POST("/login", controllers.UserLogin)
-		userRouter.PUT("/:userID", controllers.UpdateUser) //masih eror data belum ke rubah
+		userRouter.PUT("/:userID", midleware.Authentication(),controllers.UpdateUser) 
 		userRouter.DELETE("/:userID", midleware.Authentication(), controllers.DeleteUser)
 	}
 
@@ -26,7 +26,7 @@ func StartApp() *gin.Engine {
 
 		photoRouter.PUT("/:photoId", midleware.PhotoAuthorization(), controllers.UpdatePhoto)
 		photoRouter.DELETE("/:photoId", midleware.PhotoAuthorization(), controllers.DeletePhoto)
-		photoRouter.GET("/Get", midleware.PhotoAuthorization(), controllers.GetPhoto) //masih belum muncul
+		photoRouter.GET("/", midleware.PhotoAuthorization(), controllers.GetPhoto) //masih belum muncul
 	}
 
 	commentRouter := r.Group("/comments")
