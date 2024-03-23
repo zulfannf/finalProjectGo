@@ -15,7 +15,8 @@ func StartApp() *gin.Engine {
 		userRouter.POST("/register", controllers.UserRegister)
 
 		userRouter.POST("/login", controllers.UserLogin)
-		userRouter.PUT("/", controllers.UpdateUser) //masih eror
+		userRouter.PUT("/:userID", controllers.UpdateUser) //masih eror data belum ke rubah
+		userRouter.DELETE("/:userID", midleware.Authentication(), controllers.DeleteUser)
 	}
 
 	photoRouter := r.Group("/photos")

@@ -6,9 +6,12 @@ import (
 	"mygram_finalprojectgo/helpers"
 	"mygram_finalprojectgo/models"
 	"net/http"
-	// "os/user"
+	"strconv"
 
-	"github.com/dgrijalva/jwt-go"
+	// "strconv"
+
+	// "github.com/dgrijalva/jwt-go"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -92,41 +95,65 @@ func UserLogin(c *gin.Context) {
 //Update User
 func UpdateUser(c *gin.Context) {
 	db := database.GetDB()
-	userData := c.MustGet("userData").(jwt.MapClaims)
-	contentType := helpers.GetContentType(c)
-	userID := uint(userData["id"].(float64))
-
-	user := models.User{}
-
-	if contentType == appJSON {
-		if err := c.ShouldBindJSON(&user); err != nil{
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": "Invalid request",
-			})
-			return
-		}
-	} else {
-		if err := c.ShouldBind(&user); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": "invalid request",
-			})
-			return
-		}
+	userID, err := strconv.Atoi(c.Param("userID"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid ID",
+		})
+		return
 	}
-
-	if userID != user.ID {
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"error": "Unauthorized",
+	
+	User := models.User{}
+	if err := db.First(&User, userID).Error; err != nil{
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "User not Found",
 		})
 		return
 	}
 
-	if err := db.Model(&user).Updates(user).Error; err != nil {
+	if err := db.Model(&User).Updates(&User).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "Failed to update",
 		})
 		return
 	}
 	
-	c.JSON(http.StatusOK, user)
+	c.JSON(http.StatusOK, gin.H{
+		"id" : User.ID,
+		"email" : User.Email,
+		"username" : User.Username,
+		"age"	: User.Age,
+		"update_at" : User.UpdatedAt,
+	})
 }
+
+//delete User
+	func DeleteUser(c *gin.Context) {
+		db := database.GetDB()
+		userID, err := strconv.Atoi(c.Param("userID"))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "Invalid userID",
+			})
+			return
+		}
+
+		user := models.User{}
+		if err := db.First(&user, userID).Error; err != nil{
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": "User Not Found",
+			})
+			return
+		}
+
+		if err := db.Delete(&user).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": "failed to delete user",
+			})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"message": "User has been deleted",
+		})
+	}
