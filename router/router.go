@@ -29,7 +29,7 @@ func StartApp() *gin.Engine {
 		photoRouter.GET("/", midleware.PhotoAuthorization(), controllers.GetPhoto) //masih belum muncul
 	}
 
-	commentRouter := r.Group("/comments")
+	commentRouter := r.Group("/comments") //belum masih stuck
 	{
 		commentRouter.Use(midleware.Authentication())
 		commentRouter.POST("/", controllers.CreateComment)

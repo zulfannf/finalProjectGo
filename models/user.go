@@ -15,7 +15,7 @@ type User struct {
 	Password string `gorm:"not null" json:"password" form:"password" valid:"required~ password tidak boleh kosong, minstringlength(6)~Password minimal 6 karakter"`
 	Photos   []Photo
 	Comments []Comment
-	// SocialMedias [] SocialMedia
+	SocialMedias []SocialMedia
 }
 
 func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
