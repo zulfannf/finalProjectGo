@@ -26,7 +26,7 @@ func CreatePhoto(c *gin.Context) {
 		c.ShouldBind(&Photo)
 	}
 
-	Photo.UserId = userID
+	Photo.UserID = userID
 
 	err := db.Debug().Create(&Photo).Error
 
@@ -58,7 +58,7 @@ func UpdatePhoto(c *gin.Context) {
 		c.ShouldBind(&Photo)
 	}
 
-	Photo.UserId = userId
+	Photo.UserID = userId
 	Photo.ID = uint(photoId)
 
 	err := db.Model(&Photo).Where("id = ?", photoId).Updates(models.Photo{Title: Photo.Title, Caption: Photo.Caption, PhotoUrl: Photo.PhotoUrl}).Error
@@ -96,7 +96,7 @@ func DeletePhoto(c *gin.Context) {
 		return
 	}
 
-	if Photo.UserId != userID {
+	if Photo.UserID != userID {
 		c.JSON(http.StatusForbidden, gin.H{
 			"error": "You do not have permission to delete",
 		})
@@ -122,13 +122,13 @@ func GetPhoto(c *gin.Context) {
 	userData := c.MustGet("userData").(jwt.MapClaims)
 	userID := uint(userData["id"].(float64))
 
-	Photo := models.Photo{}
-	if err := db.Where("id = ?", userID).Find(&Photo).Error; err != nil {
+	Photos := models.Photo{}
+	if err := db.Where("userid = ?", userID).Find(&Photos).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "Photo not found",
 		})
 		return
 	}
 
-	c.JSON(http.StatusOK, Photo)
+	c.JSON(http.StatusOK, Photos)
 }

@@ -10,7 +10,7 @@ type Photo struct {
 	Title	string `gorm:"not null" json:"title" form:"title" valid:"required~Title of your product is required"`
 	Caption	string `json:"caption" form:"caption"`
 	PhotoUrl string `gorm:"not null" json:"photo_url" form:"photo_url" valid:"required~photo_url of your product is required"`
-	UserId uint
+	UserID uint
 	User *User
 }
 
