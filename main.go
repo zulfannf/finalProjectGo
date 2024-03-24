@@ -17,5 +17,5 @@ func main() {
 
 	var PORT = os.Getenv("PORT")
 
-	router.StarServer().Run(":" + PORT)
+	router.StartApp().Run(":" + PORT)
 }
