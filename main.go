@@ -3,19 +3,19 @@ package main
 import (
 	"mygram_finalprojectgo/database"
 	"mygram_finalprojectgo/router"
-	"os"
+	// "os"
 )
 
-// func main(){
-// 	database.StartDB()
-// 	r := router.StartApp()
-// 	r.Run(":8080")
-// }
-
-func main() {
+func main(){
 	database.StartDB()
-
-	var PORT = os.Getenv("PORT")
-
-	router.StartApp().Run(":" + PORT)
+	r := router.StartApp()
+	r.Run(":8080")
 }
+
+// func main() {
+// 	database.StartDB()
+
+// 	var PORT = os.Getenv("PORT")
+
+// 	router.StartApp().Run(":" + PORT)
+// }

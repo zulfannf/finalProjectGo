@@ -31,7 +31,7 @@ func StartApp() *gin.Engine {
 
 		photoRouter.PUT("/:photoId", midleware.PhotoAuthorization(), controllers.UpdatePhoto)
 		photoRouter.DELETE("/:photoId", midleware.PhotoAuthorization(), controllers.DeletePhoto)
-		photoRouter.GET("/user/:userID", midleware.PhotoAuthorization(), controllers.GetPhoto) //masih belum muncul
+		photoRouter.GET("/user/:userID", controllers.GetPhoto)
 	}
 
 	socialMediaRouter := r.Group("/socialmedias")
