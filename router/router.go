@@ -42,12 +42,5 @@ func StartApp() *gin.Engine {
 		socialMediaRouter.DELETE("/:socialMediaId", controllers.DeleteSocialMedia)
 		socialMediaRouter.GET("/", midleware.Authentication(),controllers.GetSocialMedia)
 	}
-
-	// commentRouter := r.Group("/comments") //belum masih stuck
-	// {
-	// 	commentRouter.Use(midleware.Authentication())
-	// 	commentRouter.POST("/", controllers.CreateComment)
-	// }
-
 	return r
 }
