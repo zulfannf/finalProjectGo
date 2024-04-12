@@ -65,7 +65,7 @@ func UserLogin(c *gin.Context) {
 
 	password = User.Password
 
-	err := db.Debug().Where("email = ?", User.Email).Take(&User).Error
+	err := db.Debug().Where("email = ? AND deleted = false", User.Email).Take(&User).Error
 
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
@@ -102,6 +102,15 @@ func UpdateUser(c *gin.Context) {
 		})
 		return
 	}
+
+	var req models.User
+	if err := c.Bind(&req); err != nil{
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid Data",
+		})
+		return
+	}
+
 	
 	User := models.User{}
 	if err := db.First(&User, userID).Error; err != nil{
@@ -111,7 +120,7 @@ func UpdateUser(c *gin.Context) {
 		return
 	}
 
-	if err := db.Model(&User).Updates(&User).Error; err != nil {
+	if err := db.Model(&User).Updates(&req).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "Failed to update",
 		})
@@ -138,21 +147,24 @@ func UpdateUser(c *gin.Context) {
 			return
 		}
 
-		user := models.User{}
-		if err := db.First(&user, userID).Error; err != nil{
-			c.JSON(http.StatusNotFound, gin.H{
-				"error": "User Not Found",
-			})
-			return
-		}
+		var req models.User
+	req.Deleted = true
 
-		if err := db.Delete(&user).Error; err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"error": "failed to delete user",
-			})
-			return
-		}
+	
+	User := models.User{}
+	if err := db.First(&User, userID).Error; err != nil{
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "User not Found",
+		})
+		return
+	}
 
+	if err := db.Model(&User).Updates(&req).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to update",
+		})
+		return
+	}
 		c.JSON(http.StatusOK, gin.H{
 			"message": "User has been deleted",
 		})

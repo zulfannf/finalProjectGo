@@ -13,6 +13,7 @@ type User struct {
 	Email    string `gorm:"not null;uniqueIndex" json:"email" form:"email" valid:"required~email tidak boleh kosong,email~email tidak tepat"`
 	Age      int    `gorm:"not null;check:age > 8" json:"age" form:"age" valid:"required~umur harus diatas 8"`
 	Password string `gorm:"not null" json:"password" form:"password" valid:"required~ password tidak boleh kosong, minstringlength(6)~Password minimal 6 karakter"`
+	Deleted bool `gorm:"not null"`
 	Photos   []Photo
 	Comments []Comment
 	SocialMedias []SocialMedia
