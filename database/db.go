@@ -11,11 +11,11 @@ import (
 )
 
 var (
-	host = "localhost"
-	user = "postgres"
-	password = "akiyama23"
-	port = "5432"
-	dbname = "myGram"
+	host = ""
+	user = ""
+	password = ""
+	port = ""
+	dbname = ""
 	db	*gorm.DB
 	err	error
 
